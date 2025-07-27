@@ -120,7 +120,7 @@ function cfu_render_settings_page() {
                           <option value="webp" <?php selected($convert_uploads_to, 'webp'); ?> <?php disabled(!$webp_supported); ?>>WebP</option>
                           <option value="avif" <?php selected($convert_uploads_to, 'avif'); ?> <?php disabled(!$avif_supported); ?>>AVIF</option>
                       </select>
-                      <span class="description">Choose the format to convert new JPEG uploads to. Only supported formats are enabled.</span>
+                      <span class="description">Choose the format to convert new JPEG uploads to. Only supported formats are enabled. Selecting AVIF will also convert WebP to AVIF.</span>
                   </td>
               </tr>
           </table>
@@ -166,12 +166,13 @@ function cfu_set_image_quality( $quality, $mime_type ) {
 }
 add_filter( 'wp_editor_set_quality', 'cfu_set_image_quality', 10, 2 );
 
-// Set output format for new JPEG uploads
+// Set output format for new JPEG and WebP uploads
 function cfu_set_image_editor_output_format( $formats ) {
     $convert_to = get_option('cfu_convert_uploads_to', 'none');
     if ($convert_to === 'webp') {
         $formats['image/jpeg'] = 'image/webp';
     } elseif ($convert_to === 'avif') {
+        $formats['image/webp'] = 'image/avif';
         $formats['image/jpeg'] = 'image/avif';
     } else {
         unset($formats['image/jpeg']); // Use default
@@ -224,9 +225,7 @@ if (get_option('cfu_disable_comments', false)) {
     add_action('admin_init', 'cfu_disable_comments_admin');
 }
 
-
 // Force strong passwords by hiding the option to allow weak passowrds
-
 function force_strong_passwords_login() {
   wp_add_inline_style( 'login', '.pw-weak{display:none!important}' );
 }
