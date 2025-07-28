@@ -5,6 +5,7 @@
  * Version: 0.1.0
  * Author: Jeremy Mullis, Coneflower Consulting
  * Author URI: https://www.coneflower.org
+ * GitHub Plugin URI: https://github.com/drdogbot7/wp-plugin-coneflower-utilities
  * License: GPL2
  */
 
