@@ -63,6 +63,21 @@ add_action('admin_init', function() {
       },
       'default' => $default_convert
     ]);
+    register_setting('cfu_settings_group', 'cfu_disable_medium_large_image_size', [
+        'type' => 'boolean',
+        'sanitize_callback' => function($v) { return (bool)$v; },
+        'default' => false
+    ]);
+    register_setting('cfu_settings_group', 'cfu_disable_1536x1536_image_size', [
+        'type' => 'boolean',
+        'sanitize_callback' => function($v) { return (bool)$v; },
+        'default' => false
+    ]);
+    register_setting('cfu_settings_group', 'cfu_disable_2048x2048_image_size', [
+        'type' => 'boolean',
+        'sanitize_callback' => function($v) { return (bool)$v; },
+        'default' => false
+    ]);
     register_setting('cfu_settings_group', 'cfu_disable_comments', [
         'type' => 'boolean',
         'sanitize_callback' => function($v) { return (bool)$v; },
@@ -85,44 +100,56 @@ function cfu_render_settings_page() {
     <div class="wrap">
         <h1>Coneflower Utilities Settings</h1>
         <?php if (!$webp_supported): ?>
-            <div class="notice notice-warning"><p><strong>Warning:</strong> WebP image support is not available on this server. WebP conversion and delivery will not work. Please enable WebP support in GD or ImageMagick.</p></div>
+        <div class="notice notice-warning"><p><strong>Warning:</strong> WebP image support is not available on this server. WebP conversion and delivery will not work. Please enable WebP support in GD or ImageMagick.</p></div>
         <?php endif; ?>
         <?php if (!$avif_supported): ?>
-            <div class="notice notice-warning"><p><strong>Warning:</strong> AVIF image support is not available on this server. AVIF conversion and delivery will not work. Please enable AVIF support in GD or ImageMagick.</p></div>
+        <div class="notice notice-warning"><p><strong>Warning:</strong> AVIF image support is not available on this server. AVIF conversion and delivery will not work. Please enable AVIF support in GD or ImageMagick.</p></div>
         <?php endif; ?>
         <form method="post" action="options.php">
           <?php settings_fields('cfu_settings_group'); ?>
           <?php do_settings_sections('cfu_settings_group'); ?>
           <h2>Image Settings</h2>
           <table class="form-table">
-              <tr>
-                  <th scope="row">Max Image Size</th>
-                  <td><input type="number" name="cfu_big_size_threshold" value="<?php echo esc_attr(get_option('cfu_big_size_threshold', 1920)); ?>" min="0" /></td>
-                  <span class="description">Images larger than this size will be scaled down on upload.</span>
-              </tr>
-              <tr>
-                  <th scope="row">JPEG Quality (0-100)</th>
-                  <td><input type="number" name="cfu_jpeg_quality" value="<?php echo esc_attr(get_option('cfu_jpeg_quality', 82)); ?>" min="0" max="100" /></td>
-              </tr>
-              <tr>
-                  <th scope="row">WebP Quality (0-100)</th>
-                  <td><input type="number" name="cfu_webp_quality" value="<?php echo esc_attr(get_option('cfu_webp_quality', 82)); ?>" min="0" max="100" /></td>
-              </tr>
-              <tr>
-                  <th scope="row">AVIF Quality (0-100)</th>
-                  <td><input type="number" name="cfu_avif_quality" value="<?php echo esc_attr(get_option('cfu_avif_quality', 82)); ?>" min="0" max="100" /></td>
-              </tr>
-              <tr>
-                  <th scope="row">Convert new JPEG uploads to</th>
-                  <td>
-                      <select name="cfu_convert_uploads_to">
-                          <option value="none" <?php selected($convert_uploads_to, 'none'); ?>>No conversion</option>
-                          <option value="webp" <?php selected($convert_uploads_to, 'webp'); ?> <?php disabled(!$webp_supported); ?>>WebP</option>
-                          <option value="avif" <?php selected($convert_uploads_to, 'avif'); ?> <?php disabled(!$avif_supported); ?>>AVIF</option>
-                      </select>
-                      <span class="description">Choose the format to convert new JPEG uploads to. Only supported formats are enabled. Selecting AVIF will also convert WebP to AVIF.</span>
-                  </td>
-              </tr>
+            <tr>
+                <th scope="row">Max Image Size</th>
+                <td><input type="number" name="cfu_big_size_threshold" value="<?php echo esc_attr(get_option('cfu_big_size_threshold', 1920)); ?>" min="0" /></td>
+                <span class="description">Images larger than this size will be scaled down on upload.</span>
+            </tr>
+            <tr>
+                <th scope="row">JPEG Quality (0-100)</th>
+                <td><input type="number" name="cfu_jpeg_quality" value="<?php echo esc_attr(get_option('cfu_jpeg_quality', 82)); ?>" min="0" max="100" /></td>
+            </tr>
+            <tr>
+                <th scope="row">WebP Quality (0-100)</th>
+                <td><input type="number" name="cfu_webp_quality" value="<?php echo esc_attr(get_option('cfu_webp_quality', 82)); ?>" min="0" max="100" /></td>
+            </tr>
+            <tr>
+                <th scope="row">AVIF Quality (0-100)</th>
+                <td><input type="number" name="cfu_avif_quality" value="<?php echo esc_attr(get_option('cfu_avif_quality', 82)); ?>" min="0" max="100" /></td>
+            </tr>
+            <tr>
+                <th scope="row">Convert new JPEG uploads to</th>
+                <td>
+                    <select name="cfu_convert_uploads_to">
+                        <option value="none" <?php selected($convert_uploads_to, 'none'); ?>>No conversion</option>
+                        <option value="webp" <?php selected($convert_uploads_to, 'webp'); ?> <?php disabled(!$webp_supported); ?>>WebP</option>
+                        <option value="avif" <?php selected($convert_uploads_to, 'avif'); ?> <?php disabled(!$avif_supported); ?>>AVIF</option>
+                    </select>
+                    <span class="description">Choose the format to convert new JPEG uploads to. Only supported formats are enabled. Selecting AVIF will also convert WebP to AVIF.</span>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Disable <code>medium_large</code> image size.</th>
+                <td><input type="checkbox" name="cfu_disable_medium_large_image_size" value="1" <?php checked(1, get_option('cfu_disable_medium_large_image_size', false), true); ?> /> Disable the 756x0 image size.</td>
+            </tr>
+            <tr>
+                <th scope="row">Disable <code>1536x1536</code> image size.</th>
+                <td><input type="checkbox" name="cfu_disable_1536x1536_image_size" value="1" <?php checked(1, get_option('cfu_disable_1536x1536_image_size', false), true); ?> /> Disable the 1536x1536 (2x medium) image size.</td>
+            </tr>
+            <tr>
+                <th scope="row">Disable <code>2048x2048</code> image size.</th>
+                <td><input type="checkbox" name="cfu_disable_2048x2048_image_size" value="1" <?php checked(1, get_option('cfu_disable_2048x2048_image_size', false), true); ?> /> Disable the 2048x2048 (2x large) image size.</td>
+            </tr>
           </table>
           <h2>Comments</h2>
           <table class="form-table">
@@ -144,12 +171,35 @@ function cfu_render_settings_page() {
     <?php
 }
 
-
+// set maximum image size
 function cfu_set_big_image_size_threshold($threshold) {
   return get_option('cfu_big_size_threshold', 1920);
 }
 add_filter('big_image_size_threshold', 'cfu_set_big_image_size_threshold');
 
+// disable "medium_large" size
+function cfu_disable_medium_large_image_size($sizes) {
+  return array_diff($sizes, ['medium_large']);  // Medium Large (768 x 0)
+};
+if (get_option('cfu_disable_medium_large_image_size', false)) {
+  add_filter('intermediate_image_sizes', 'cfu_disable_medium_large_image_size');
+}
+
+//disable 1536x1536 image size
+function cfu_disable_1536x1536_image_size() {
+  remove_image_size( '1536x1536' );
+}
+if (get_option('cfu_disable_1536x1536_image_size', false)) {
+  add_action( 'init', 'cfu_disable_1536x1536_image_size' );
+}
+
+// disable 2048x2048 image size
+function cfu_disable_2048x2048_image_size() {
+  remove_image_size( '2048x2048' );
+}
+if (get_option('cfu_disable_2048x2048_image_size', false)) {
+  add_action( 'init', 'cfu_disable_2048x2048_image_size' );
+}
 
 // Set image quality for each format
 function cfu_set_image_quality( $quality, $mime_type ) {
