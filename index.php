@@ -287,15 +287,15 @@ if (get_option('cfu_disable_comments', false)) {
 }
 
 // Force strong passwords by hiding the option to allow weak passowrds
-function force_strong_passwords_login() {
+function cfu_force_strong_passwords_login() {
 	wp_add_inline_style( 'login', '.pw-weak{display:none!important}' );
 }
 
-function force_strong_passwords_admin() {
+function cfu_force_strong_passwords_admin() {
 	wp_add_inline_style( 'wp-admin', '.pw-weak{display:none!important}' );
 }
 
 if (get_option('cfu_force_strong_passwords', false)) {
-	add_action( 'login_enqueue_scripts', 'force_strong_passwords_login');
-	add_action('admin_enqueue_scripts', 'force_strong_passwords_admin');
+	add_action( 'login_enqueue_scripts', 'cfu_force_strong_passwords_login');
+	add_action('admin_enqueue_scripts', 'cfu_force_strong_passwords_admin');
 }
