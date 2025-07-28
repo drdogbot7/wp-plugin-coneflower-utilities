@@ -2,10 +2,11 @@
 /**
  * Plugin Name: Coneflower Utilities
  * Description: A WordPress plugin that does a few useful things.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Jeremy Mullis, Coneflower Consulting
  * Author URI: https://www.coneflower.org
  * GitHub Plugin URI: https://github.com/drdogbot7/wp-plugin-coneflower-utilities
+ * Primary Branch: main
  * License: GPL2
  */
 
@@ -82,12 +83,27 @@ add_action('admin_init', function() {
 	register_setting('cfu_settings_group', 'cfu_disable_comments', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => false
+		'default' => true
 	]);
 	register_setting('cfu_settings_group', 'cfu_force_strong_passwords', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => false
+		'default' => true
+	]);
+	register_setting('cfu_settings_group', 'cfu_disable_rest_endpoints', [
+		'type' => 'boolean',
+		'sanitize_callback' => function($v) { return (bool)$v; },
+		'default' => true
+	]);
+	register_setting('cfu_settings_group', 'cfu_disable_xmlrpc', [
+		'type' => 'boolean',
+		'sanitize_callback' => function($v) { return (bool)$v; },
+		'default' => true
+	]);
+	register_setting('cfu_settings_group', 'cfu_disable_update_emails', [
+		'type' => 'boolean',
+		'sanitize_callback' => function($v) { return (bool)$v; },
+		'default' => true
 	]);
 });
 
@@ -109,7 +125,7 @@ function cfu_render_settings_page() {
 		<form method="post" action="options.php">
 			<?php settings_fields('cfu_settings_group'); ?>
 			<?php do_settings_sections('cfu_settings_group'); ?>
-			<h2>Image Settings</h2>
+			<h2>Image Sizes</h2>
 			<table class="form-table">
 				<tr>
 					<th scope="row">Max Image Size</th>
@@ -118,6 +134,22 @@ function cfu_render_settings_page() {
 						<span class="description">Wordpress default is 2560. Images larger than this size will be scaled down on upload.</span>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">Disable <code>medium_large</code>.</th>
+					<td><input type="checkbox" name="cfu_disable_medium_large_image_size" value="1" <?php checked(1, get_option('cfu_disable_medium_large_image_size'), true); ?> /> Disable the 756x0 image size.</td>
+				</tr>
+				<tr>
+					<th scope="row">Disable <code>1536x1536</code>.</th>
+					<td><input type="checkbox" name="cfu_disable_1536x1536_image_size" value="1" <?php checked(1, get_option('cfu_disable_1536x1536_image_size'), true); ?> /> Disable the 1536x1536 (2x medium) image size.</td>
+				</tr>
+				<tr>
+					<th scope="row">Disable <code>2048x2048</code>.</th>
+					<td><input type="checkbox" name="cfu_disable_2048x2048_image_size" value="1" <?php checked(1, get_option('cfu_disable_2048x2048_image_size'), true); ?> /> Disable the 2048x2048 (2x large) image size.</td>
+				</tr>
+			</table>
+			<h2>Image Quality and Format</h2>
+			<p>Change the default quality of Wordpress created images, and choose to convert images on upload.</p>
+			<table class="form-table">
 				<tr>
 					<th scope="row">JPEG Quality (0-100)</th>
 					<td><input type="number" name="cfu_jpeg_quality" value="<?php echo esc_attr(get_option('cfu_jpeg_quality', 82)); ?>" min="0" max="100" />
@@ -146,34 +178,37 @@ function cfu_render_settings_page() {
 							<option value="webp" <?php selected($convert_uploads_to, 'webp'); ?> <?php disabled(!$webp_supported); ?> >WebP</option>
 							<option value="avif" <?php selected($convert_uploads_to, 'avif'); ?> <?php disabled(!$avif_supported); ?> >AVIF</option>
 						</select>
-						<span class="description">Choose the format to convert new JPEG uploads to. Only supported formats are enabled. Selecting AVIF will also convert WebP to AVIF.</span>
+						<span class="description">Choose the format to convert new JPEG uploads to. Only supported formats are enabled. Selecting AVIF will also convert WebP to AVIF. Existing images will not be converted, but can be manually regenerated.</span>
 					</td>
-				</tr>
-				<tr>
-					<th scope="row">Disable <code>medium_large</code> image size.</th>
-					<td><input type="checkbox" name="cfu_disable_medium_large_image_size" value="1" <?php checked(1, get_option('cfu_disable_medium_large_image_size', false), true); ?> /> Disable the 756x0 image size.</td>
-				</tr>
-				<tr>
-					<th scope="row">Disable <code>1536x1536</code> image size.</th>
-					<td><input type="checkbox" name="cfu_disable_1536x1536_image_size" value="1" <?php checked(1, get_option('cfu_disable_1536x1536_image_size', false), true); ?> /> Disable the 1536x1536 (2x medium) image size.</td>
-				</tr>
-				<tr>
-					<th scope="row">Disable <code>2048x2048</code> image size.</th>
-					<td><input type="checkbox" name="cfu_disable_2048x2048_image_size" value="1" <?php checked(1, get_option('cfu_disable_2048x2048_image_size', false), true); ?> /> Disable the 2048x2048 (2x large) image size.</td>
 				</tr>
 			</table>
 			<h2>Comments</h2>
 			<table class="form-table">
 				<tr>
 					<th scope="row">Disable Comments</th>
-					<td><input type="checkbox" name="cfu_disable_comments" value="1" <?php checked(1, get_option('cfu_disable_comments', false), true); ?> /> Disable all comments site-wide.</td>
+					<td><input type="checkbox" name="cfu_disable_comments" value="1" <?php checked(1, get_option('cfu_disable_comments'), true); ?> /> Disable all comments site-wide.</td>
 				</tr>
 			</table>
 			<h2>Security</h2>
 			<table class="form-table">
 				<tr>
 					<th scope="row">Force Strong Passwords</th>
-					<td><input type="checkbox" name="cfu_force_strong_passwords" value="1" <?php checked(1, get_option('cfu_force_strong_passwords', false), true); ?> /> Hide the option to allow weak passwords.</td>
+					<td><input type="checkbox" name="cfu_force_strong_passwords" value="1" <?php checked(1, get_option('cfu_force_strong_passwords'), true); ?> /> Hide the option to allow weak passwords. This merely hides the "allow weak password" checkbox.</td>
+				</tr>
+				<tr>
+					<th scope="row">Disable Users API</th>
+					<td><input type="checkbox" name="cfu_disable_rest_endpoints" value="1" <?php checked(1, get_option('cfu_disable_rest_endpoints'), true); ?> /> Disable default users API endpoints for security.</td>
+				</tr>
+				<tr>
+					<th scope="row">Disable XML RPC</th>
+					<td><input type="checkbox" name="cfu_disable_xmlrpc" value="1" <?php checked(1, get_option('cfu_disable_xmlrpc'), true); ?> /> Disable XML RPC for security.</td>
+				</tr>
+			</table>
+			<h2>Email</h2>
+			<table class="form-table">
+				<tr>
+					<th scope="row">Disable Update Notification emails</th>
+					<td><input type="checkbox" name="cfu_disable_update_emails" value="1" <?php checked(1, get_option('cfu_disable_update_emails'), true); ?> /> Disable email notifications for automatic plugin, theme and core updates.</td>
 				</tr>
 			</table>
 			<?php submit_button(); ?>
@@ -298,4 +333,38 @@ function cfu_force_strong_passwords_admin() {
 if (get_option('cfu_force_strong_passwords', false)) {
 	add_action( 'login_enqueue_scripts', 'cfu_force_strong_passwords_login');
 	add_action('admin_enqueue_scripts', 'cfu_force_strong_passwords_admin');
+}
+
+// Disable XML RPC for security.
+if (get_option('cfu_disable_xmlrpc', false)) {
+	add_filter('xmlrpc_enabled', '__return_false');
+	add_filter('xmlrpc_methods', '__return_false');
+}
+
+// Disable default users API endpoints for security.
+// https://www.wp-tweaks.com/hackers-can-find-your-wordpress-username/
+function cfu_disable_rest_endpoints(array $endpoints): array
+{
+    if (!is_user_logged_in()) {
+        if (isset($endpoints['/wp/v2/users'])) {
+            unset($endpoints['/wp/v2/users']);
+        }
+
+        if (isset($endpoints['/wp/v2/users/(?P<id>[\d]+)'])) {
+            unset($endpoints['/wp/v2/users/(?P<id>[\d]+)']);
+        }
+    }
+
+    return $endpoints;
+}
+
+if (get_option('cfu_disable_rest_endpoints', false)) {
+	add_filter( 'rest_endpoints', 'cfu_disable_rest_endpoints');
+}
+
+// Disable email notifications about automatic updates
+if (get_option('cfu_disable_update_emails', false)) {
+	add_filter( 'auto_core_update_send_email', '__return_false' );
+	add_filter( 'auto_plugin_update_send_email', '__return_false' );
+	add_filter( 'auto_theme_update_send_email', '__return_false' );
 }

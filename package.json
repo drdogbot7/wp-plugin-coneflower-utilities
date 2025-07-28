@@ -2,7 +2,6 @@
   "name": "coneflower-utilities",
   "description": "A WordPress plugin that does a few useful things",
   "authors": "Jeremy Mullis, Coneflower Consulting",
-  "version": "0.1.0",
   "scripts": {
     "wp-env": "wp-env",
     "check-engines": "wp-scripts check-engines",
