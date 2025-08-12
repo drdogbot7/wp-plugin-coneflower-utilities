@@ -2,11 +2,10 @@
 /**
  * Plugin Name: Coneflower Utilities
  * Description: A WordPress plugin that does a few useful things.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: Jeremy Mullis, Coneflower Consulting
  * Author URI: https://www.coneflower.org
  * GitHub Plugin URI: https://github.com/drdogbot7/wp-plugin-coneflower-utilities
- * Primary Branch: main
  * License: GPL2
  */
 
