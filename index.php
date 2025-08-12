@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Coneflower Utilities
  * Description: A WordPress plugin that does a few useful things.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: Jeremy Mullis, Coneflower Consulting
  * Author URI: https://www.coneflower.org
  * GitHub Plugin URI: https://github.com/drdogbot7/wp-plugin-coneflower-utilities
@@ -12,8 +12,8 @@
 
 
 // Get settings or use defaults
-$big_size_threshold = get_option('cfu_big_size_threshold', 1920);
-$webp_quality = get_option('cfu_webp_quality', 82);
+$big_size_threshold = get_option('cfu_big_size_threshold');
+$webp_quality = get_option('cfu_webp_quality');
 
 // Add settings page
 add_action('admin_menu', function() {
@@ -130,21 +130,21 @@ function cfu_render_settings_page() {
 				<tr>
 					<th scope="row">Max Image Size</th>
 					<td>
-						<input type="number" name="cfu_big_size_threshold" value="<?php echo esc_attr(get_option('cfu_big_size_threshold', 1920)); ?>" min="0" />
+						<input type="number" name="cfu_big_size_threshold" value="<?php echo esc_attr(get_option('cfu_big_size_threshold')); ?>" min="0" />
 						<span class="description">Wordpress default is 2560. Images larger than this size will be scaled down on upload.</span>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">Disable <code>medium_large</code>.</th>
-					<td><input type="checkbox" name="cfu_disable_medium_large_image_size" value="1" <?php checked(1, get_option('cfu_disable_medium_large_image_size'), true); ?> /> Disable the 756x0 image size.</td>
+					<td><input type="checkbox" name="cfu_disable_medium_large_image_size" value="1" <?php checked(1, get_option('cfu_disable_medium_large_image_size')); ?> /> Disable the 756x0 image size.</td>
 				</tr>
 				<tr>
 					<th scope="row">Disable <code>1536x1536</code>.</th>
-					<td><input type="checkbox" name="cfu_disable_1536x1536_image_size" value="1" <?php checked(1, get_option('cfu_disable_1536x1536_image_size'), true); ?> /> Disable the 1536x1536 (2x medium) image size.</td>
+					<td><input type="checkbox" name="cfu_disable_1536x1536_image_size" value="1" <?php checked(1, get_option('cfu_disable_1536x1536_image_size')); ?> /> Disable the 1536x1536 (2x medium) image size.</td>
 				</tr>
 				<tr>
 					<th scope="row">Disable <code>2048x2048</code>.</th>
-					<td><input type="checkbox" name="cfu_disable_2048x2048_image_size" value="1" <?php checked(1, get_option('cfu_disable_2048x2048_image_size'), true); ?> /> Disable the 2048x2048 (2x large) image size.</td>
+					<td><input type="checkbox" name="cfu_disable_2048x2048_image_size" value="1" <?php checked(1, get_option('cfu_disable_2048x2048_image_size')); ?> /> Disable the 2048x2048 (2x large) image size.</td>
 				</tr>
 			</table>
 			<h2>Image Quality and Format</h2>
@@ -152,21 +152,21 @@ function cfu_render_settings_page() {
 			<table class="form-table">
 				<tr>
 					<th scope="row">JPEG Quality (0-100)</th>
-					<td><input type="number" name="cfu_jpeg_quality" value="<?php echo esc_attr(get_option('cfu_jpeg_quality', 82)); ?>" min="0" max="100" />
+					<td><input type="number" name="cfu_jpeg_quality" value="<?php echo esc_attr(get_option('cfu_jpeg_quality')); ?>" min="0" max="100" />
 						<span class="description">Wordpress default is 82.</span>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">WebP Quality (0-100)</th>
 					<td>
-						<input type="number" name="cfu_webp_quality" value="<?php echo esc_attr(get_option('cfu_webp_quality', 82)); ?>" min="0" max="100" />
+						<input type="number" name="cfu_webp_quality" value="<?php echo esc_attr(get_option('cfu_webp_quality')); ?>" min="0" max="100" />
 						<span class="description">Wordpress default is 82.</span>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">AVIF Quality (0-100)</th>
 					<td>
-						<input type="number" name="cfu_avif_quality" value="<?php echo esc_attr(get_option('cfu_avif_quality', 82)); ?>" min="0" max="100" />
+						<input type="number" name="cfu_avif_quality" value="<?php echo esc_attr(get_option('cfu_avif_quality')); ?>" min="0" max="100" />
 						<span class="description">Wordpress default is 82.</span>
 					</td>
 				</tr>
@@ -186,29 +186,29 @@ function cfu_render_settings_page() {
 			<table class="form-table">
 				<tr>
 					<th scope="row">Disable Comments</th>
-					<td><input type="checkbox" name="cfu_disable_comments" value="1" <?php checked(1, get_option('cfu_disable_comments'), true); ?> /> Disable all comments site-wide.</td>
+					<td><input type="checkbox" name="cfu_disable_comments" value="1" <?php checked(1, get_option('cfu_disable_comments')); ?> /> Disable all comments site-wide.</td>
 				</tr>
 			</table>
 			<h2>Security</h2>
 			<table class="form-table">
 				<tr>
 					<th scope="row">Force Strong Passwords</th>
-					<td><input type="checkbox" name="cfu_force_strong_passwords" value="1" <?php checked(1, get_option('cfu_force_strong_passwords'), true); ?> /> Hide the option to allow weak passwords. This merely hides the "allow weak password" checkbox.</td>
+					<td><input type="checkbox" name="cfu_force_strong_passwords" value="1" <?php checked(1, get_option('cfu_force_strong_passwords')); ?> /> Hide the option to allow weak passwords. This merely hides the "allow weak password" checkbox.</td>
 				</tr>
 				<tr>
 					<th scope="row">Disable Users API</th>
-					<td><input type="checkbox" name="cfu_disable_rest_endpoints" value="1" <?php checked(1, get_option('cfu_disable_rest_endpoints'), true); ?> /> Disable default users API endpoints for security.</td>
+					<td><input type="checkbox" name="cfu_disable_rest_endpoints" value="1" <?php checked(1, get_option('cfu_disable_rest_endpoints')); ?> /> Disable default users API endpoints for security.</td>
 				</tr>
 				<tr>
 					<th scope="row">Disable XML RPC</th>
-					<td><input type="checkbox" name="cfu_disable_xmlrpc" value="1" <?php checked(1, get_option('cfu_disable_xmlrpc'), true); ?> /> Disable XML RPC for security.</td>
+					<td><input type="checkbox" name="cfu_disable_xmlrpc" value="1" <?php checked(1, get_option('cfu_disable_xmlrpc')); ?> /> Disable XML RPC for security.</td>
 				</tr>
 			</table>
 			<h2>Email</h2>
 			<table class="form-table">
 				<tr>
 					<th scope="row">Disable Update Notification emails</th>
-					<td><input type="checkbox" name="cfu_disable_update_emails" value="1" <?php checked(1, get_option('cfu_disable_update_emails'), true); ?> /> Disable email notifications for automatic plugin, theme and core updates.</td>
+					<td><input type="checkbox" name="cfu_disable_update_emails" value="1" <?php checked(1, get_option('cfu_disable_update_emails')); ?> /> Disable email notifications for automatic plugin, theme and core updates.</td>
 				</tr>
 			</table>
 			<?php submit_button(); ?>
@@ -219,7 +219,7 @@ function cfu_render_settings_page() {
 
 // set maximum image size
 function cfu_set_big_image_size_threshold($threshold) {
-	return get_option('cfu_big_size_threshold', 1920);
+	return get_option('cfu_big_size_threshold');
 }
 add_filter('big_image_size_threshold', 'cfu_set_big_image_size_threshold');
 
@@ -227,7 +227,7 @@ add_filter('big_image_size_threshold', 'cfu_set_big_image_size_threshold');
 function cfu_disable_medium_large_image_size($sizes) {
 	return array_diff($sizes, ['medium_large']);  // Medium Large (768 x 0)
 };
-if (get_option('cfu_disable_medium_large_image_size', false)) {
+if (get_option('cfu_disable_medium_large_image_size')) {
 	add_filter('intermediate_image_sizes', 'cfu_disable_medium_large_image_size');
 }
 
@@ -235,7 +235,7 @@ if (get_option('cfu_disable_medium_large_image_size', false)) {
 function cfu_disable_1536x1536_image_size() {
 	remove_image_size( '1536x1536' );
 }
-if (get_option('cfu_disable_1536x1536_image_size', false)) {
+if (get_option('cfu_disable_1536x1536_image_size')) {
 	add_action( 'init', 'cfu_disable_1536x1536_image_size' );
 }
 
@@ -243,7 +243,7 @@ if (get_option('cfu_disable_1536x1536_image_size', false)) {
 function cfu_disable_2048x2048_image_size() {
 	remove_image_size( '2048x2048' );
 }
-if (get_option('cfu_disable_2048x2048_image_size', false)) {
+if (get_option('cfu_disable_2048x2048_image_size')) {
 	add_action( 'init', 'cfu_disable_2048x2048_image_size' );
 }
 
@@ -264,7 +264,7 @@ add_filter( 'wp_editor_set_quality', 'cfu_set_image_quality', 10, 2 );
 
 // Set output format for new JPEG and WebP uploads
 function cfu_set_image_editor_output_format( $formats ) {
-	$convert_to = get_option('cfu_convert_uploads_to', 'none');
+	$convert_to = get_option('cfu_convert_uploads_to');
 	if ($convert_to === 'webp') {
 			$formats['image/jpeg'] = 'image/webp';
 	} elseif ($convert_to === 'avif') {
@@ -316,7 +316,7 @@ function cfu_disable_comments_admin() {
 	remove_menu_page('edit-comments.php');
 }
 
-if (get_option('cfu_disable_comments', false)) {
+if (get_option('cfu_disable_comments')) {
 	add_action('init', 'cfu_disable_comments');
 	add_action('admin_init', 'cfu_disable_comments_admin');
 }
@@ -330,13 +330,13 @@ function cfu_force_strong_passwords_admin() {
 	wp_add_inline_style( 'wp-admin', '.pw-weak{display:none!important}' );
 }
 
-if (get_option('cfu_force_strong_passwords', false)) {
+if (get_option('cfu_force_strong_passwords')) {
 	add_action( 'login_enqueue_scripts', 'cfu_force_strong_passwords_login');
 	add_action('admin_enqueue_scripts', 'cfu_force_strong_passwords_admin');
 }
 
 // Disable XML RPC for security.
-if (get_option('cfu_disable_xmlrpc', false)) {
+if (get_option('cfu_disable_xmlrpc')) {
 	add_filter('xmlrpc_enabled', '__return_false');
 	add_filter('xmlrpc_methods', '__return_false');
 }
@@ -358,12 +358,12 @@ function cfu_disable_rest_endpoints(array $endpoints): array
     return $endpoints;
 }
 
-if (get_option('cfu_disable_rest_endpoints', false)) {
+if (get_option('cfu_disable_rest_endpoints')) {
 	add_filter( 'rest_endpoints', 'cfu_disable_rest_endpoints');
 }
 
 // Disable email notifications about automatic updates
-if (get_option('cfu_disable_update_emails', false)) {
+if (get_option('cfu_disable_update_emails')) {
 	add_filter( 'auto_core_update_send_email', '__return_false' );
 	add_filter( 'auto_plugin_update_send_email', '__return_false' );
 	add_filter( 'auto_theme_update_send_email', '__return_false' );
