@@ -289,6 +289,14 @@ function cfu_disable_comments() {
 	if (is_admin_bar_showing()) {
 			remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 60);
 	}
+
+	// Disable support for comments and trackbacks in post types
+	foreach (get_post_types() as $post_type) {
+		if (post_type_supports($post_type, 'comments')) {
+			remove_post_type_support($post_type, 'comments');
+			remove_post_type_support($post_type, 'trackbacks');
+		}
+	}
 }
 
 function cfu_disable_comments_admin() {
@@ -299,18 +307,14 @@ function cfu_disable_comments_admin() {
 			wp_redirect(admin_url());
 			exit();
 	}
+}
 
+function cfu_disable_comments_dashboard() {
 	// Remove comments metabox from dashboard
 	remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
+}
 
-	// Disable support for comments and trackbacks in post types
-	foreach (get_post_types() as $post_type) {
-		if (post_type_supports($post_type, 'comments')) {
-			remove_post_type_support($post_type, 'comments');
-			remove_post_type_support($post_type, 'trackbacks');
-		}
-	}
-
+function cfu_disable_comments_menu_page() {
 	// Remove comments page in menu
 	remove_menu_page('edit-comments.php');
 }
@@ -318,6 +322,8 @@ function cfu_disable_comments_admin() {
 if (get_option('cfu_disable_comments')) {
 	add_action('init', 'cfu_disable_comments');
 	add_action('admin_init', 'cfu_disable_comments_admin');
+	add_action('admin_menu', 'cfu_disable_comments_menu_page');
+	add_action('add_meta_boxes', 'cfu_disable_comments_dashboard');
 }
 
 // Force strong passwords by hiding the option to allow weak passowrds
