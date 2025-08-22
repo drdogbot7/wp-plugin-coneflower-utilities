@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Coneflower Utilities
  * Description: A WordPress plugin that does a few useful things.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: Jeremy Mullis, Coneflower Consulting
  * Author URI: https://www.coneflower.org
  * GitHub Plugin URI: https://github.com/drdogbot7/wp-plugin-coneflower-utilities
@@ -39,7 +39,7 @@ add_action('admin_init', function() {
 	register_setting('cfu_settings_group', 'cfu_big_size_threshold', [
 		'type' => 'integer',
 		'sanitize_callback' => 'absint',
-		'default' => 1920
+		'default' => 2560
 	]);
 	register_setting('cfu_settings_group', 'cfu_jpeg_quality', [
 		'type' => 'integer',
@@ -82,27 +82,27 @@ add_action('admin_init', function() {
 	register_setting('cfu_settings_group', 'cfu_disable_comments', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => true
+		'default' => false
 	]);
 	register_setting('cfu_settings_group', 'cfu_force_strong_passwords', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => true
+		'default' => false
 	]);
 	register_setting('cfu_settings_group', 'cfu_disable_rest_endpoints', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => true
+		'default' => false
 	]);
 	register_setting('cfu_settings_group', 'cfu_disable_xmlrpc', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => true
+		'default' => false
 	]);
 	register_setting('cfu_settings_group', 'cfu_disable_update_emails', [
 		'type' => 'boolean',
 		'sanitize_callback' => function($v) { return (bool)$v; },
-		'default' => true
+		'default' => false
 	]);
 });
 
