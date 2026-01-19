@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Coneflower Utilities
  * Description: A WordPress plugin that does a few useful things.
- * Version: 0.1.4
+ * Version: 0.1.5
  * Author: Jeremy Mullis, Coneflower Consulting
  * Author URI: https://www.coneflower.org
  * GitHub Plugin URI: https://github.com/drdogbot7/wp-plugin-coneflower-utilities
@@ -30,12 +30,7 @@ add_action('admin_init', function() {
 	$gd_info = function_exists('gd_info') ? gd_info() : [];
 	$webp_supported = (isset($gd_info['WebP Support']) && $gd_info['WebP Support']) || (class_exists('Imagick') && in_array('WEBP', array_map('strtoupper', Imagick::queryFormats())));
 	$avif_supported = (isset($gd_info['AVIF Support']) && $gd_info['AVIF Support']) || (class_exists('Imagick') && in_array('AVIF', array_map('strtoupper', Imagick::queryFormats())));
-	$default_convert = 'none';
-	if ($avif_supported) {
-		$default_convert = 'avif';
-	} elseif ($webp_supported) {
-		$default_convert = 'webp';
-	}
+
 	register_setting('cfu_settings_group', 'cfu_big_size_threshold', [
 		'type' => 'integer',
 		'sanitize_callback' => 'absint',
@@ -62,7 +57,7 @@ add_action('admin_init', function() {
 			$allowed = ['none','webp','avif'];
 			return in_array($v, $allowed) ? $v : 'none';
 		},
-		'default' => $default_convert
+		'default' => 'none'
 	]);
 	register_setting('cfu_settings_group', 'cfu_disable_medium_large_image_size', [
 		'type' => 'boolean',
@@ -261,16 +256,20 @@ function cfu_set_image_quality( $quality, $mime_type ) {
 }
 add_filter( 'wp_editor_set_quality', 'cfu_set_image_quality', 10, 2 );
 
-// Set output format for new JPEG and WebP uploads
+// Set output format for new JPEG, WebP and HEIC uploads
 function cfu_set_image_editor_output_format( $formats ) {
-	$convert_to = get_option('cfu_convert_uploads_to');
+	$convert_to = get_option('cfu_convert_uploads_to', 'none');
 	if ($convert_to === 'webp') {
-			$formats['image/jpeg'] = 'image/webp';
+		$formats['image/jpeg'] = 'image/webp';
+		$formats['image/heic'] = 'image/webp';
 	} elseif ($convert_to === 'avif') {
-			$formats['image/webp'] = 'image/avif';
-			$formats['image/jpeg'] = 'image/avif';
+		$formats['image/heic'] = 'image/avif';
+		$formats['image/jpeg'] = 'image/avif';
+		$formats['image/webp'] = 'image/avif';
 	} else {
+			unset($formats['image/heic']); // Use default
 			unset($formats['image/jpeg']); // Use default
+			unset($formats['image/webp']); // Use default
 	}
 	return $formats;
 }
